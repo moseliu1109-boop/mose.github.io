@@ -16,24 +16,161 @@ h2{text-align:center;color:#e0b0ff;margin:8px 0;font-size:16px}
 button{width:100%;padding:10px;background:#e0b0ff;color:#1a1a2e;border:none;border-radius:6px;font-size:15px;font-weight:bold;cursor:pointer;margin:8px 0}
 .result{background:#16213e;padding:10px;border-radius:6px;white-space:pre-wrap;font-size:11px;line-height:1.4;max-height:70vh;overflow:auto;font-family:monospace}
 .green{color:#7cfc00}.red{color:#ff4444}.gold{color:#ffd700}.purple{color:#da70d6}
+.activation-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:9999}
+.activation-box{background:#1a1a2e;padding:20px;border-radius:12px;text-align:center;width:90%;max-width:400px}
+.activation-box input{width:100%;padding:10px;margin:10px 0;background:#0f0f23;border:1px solid #444;border-radius:6px;color:#fff;font-size:14px;text-align:center}
+.activation-box .btn-row{display:flex;gap:8px}
+.activation-box .btn-row button{flex:1}
 </style>
 </head>
 <body>
+
+<!-- 激活弹窗 -->
+<div class="activation-overlay" id="activationOverlay">
+<div class="activation-box">
+<h3 style="color:#e0b0ff;margin-bottom:10px">请输入激活码</h3>
+<input type="text" id="activationCode" placeholder="输入激活码">
+<div class="btn-row">
+<button onclick="verifyActivation()" style="background:#e0b0ff;">激活</button>
+</div>
+<p style="color:#888;font-size:11px;margin-top:8px">VIP码在线验证 | 普通码离线验证</p>
+</div>
+</div>
+
+<!-- 主界面（验证通过后显示） -->
+<div id="mainApp" style="display:none">
+<h2>白绿总格计算器</h2>
+<div class="section"><h3>第一回合</h3><div class="row"><label>总件数I</label><input id="I"></div><div class="row"><label>白绿均格V</label><input id="V"></div></div>
+<div class="section"><h3>第二回合</h3><div class="row"><label>金均格A</label><input id="A"></div><div class="row"><label>蓝件数Q</label><input id="Q"></div></div>
+<div class="section"><h3>第三回合</h3><div class="row"><label>紫均格B</label><input id="B"></div></div>
+<div class="section"><h3>第四回合</h3><div class="row"><label>蓝均格W</label><input id="W"></div></div>
+<div class="section"><h3>总格</h3><div class="row"><label>全总格T</label><input id="T"></div><div class="row"><label>白绿总格G</label><input id="G"></div><div class="row"><label>蓝总格L</label><input id="L"></div><div class="row"><label>紫总格Z</label><input id="Z"></div><div class="row"><label>金总格J</label><input id="J"></div></div>
+<div class="section"><h3>件数</h3><div class="row"><label>白绿件数P</label><input id="P"></div><div class="row"><label>紫件数Y</label><input id="Y"></div><div class="row"><label>金件数X</label><input id="X"></div></div>
+<div class="section"><h3>均价</h3><div class="row"><label>白绿均价</label><input id="AP"></div><div class="row"><label>蓝均价</label><input id="AQ"></div><div class="row"><label>紫均价</label><input id="AR"></div><div class="row"><label>金均价</label><input id="AU"></div></div>
+<div class="section"><h3>最少下限</h3><div class="row"><label>白绿件≥</label><input id="PL"></div><div class="row"><label>白绿格≥</label><input id="GL"></div><div class="row"><label>蓝件≥</label><input id="QL"></div><div class="row"><label>蓝格≥</label><input id="LL"></div><div class="row"><label>紫件≥</label><input id="YL"></div><div class="row"><label>紫格≥</label><input id="ZL"></div><div class="row"><label>金件≥</label><input id="XL"></div><div class="row"><label>金格≥</label><input id="JL"></div><div class="row"><label>红件≥</label><input id="SL"></div><div class="row"><label>红格≥</label><input id="HL"></div></div>
+<button onclick="calc()">开始计算</button>
+<div class="result" id="out"></div>
+</div>
+
 <script>
-var PWD='mose1314';
-var pw=prompt('请输入密码：');
-if(pw!==PWD){alert('密码错误！');document.body.innerHTML='<h2 style=color:#ff4444;text-align:center;margin-top:50px>密码错误，请刷新页面重试</h2>'}else{
-document.write('<h2>白绿总格计算器</h2>');
-document.write('<div class="section"><h3>第一回合</h3><div class="row"><label>总件数I</label><input id="I"></div><div class="row"><label>白绿均格V</label><input id="V"></div></div>');
-document.write('<div class="section"><h3>第二回合</h3><div class="row"><label>金均格A</label><input id="A"></div><div class="row"><label>蓝件数Q</label><input id="Q"></div></div>');
-document.write('<div class="section"><h3>第三回合</h3><div class="row"><label>紫均格B</label><input id="B"></div></div>');
-document.write('<div class="section"><h3>第四回合</h3><div class="row"><label>蓝均格W</label><input id="W"></div></div>');
-document.write('<div class="section"><h3>总格</h3><div class="row"><label>全总格T</label><input id="T"></div><div class="row"><label>白绿总格G</label><input id="G"></div><div class="row"><label>蓝总格L</label><input id="L"></div><div class="row"><label>紫总格Z</label><input id="Z"></div><div class="row"><label>金总格J</label><input id="J"></div></div>');
-document.write('<div class="section"><h3>件数</h3><div class="row"><label>白绿件数P</label><input id="P"></div><div class="row"><label>紫件数Y</label><input id="Y"></div><div class="row"><label>金件数X</label><input id="X"></div></div>');
-document.write('<div class="section"><h3>均价</h3><div class="row"><label>白绿均价</label><input id="AP"></div><div class="row"><label>蓝均价</label><input id="AQ"></div><div class="row"><label>紫均价</label><input id="AR"></div><div class="row"><label>金均价</label><input id="AU"></div></div>');
-document.write('<div class="section"><h3>最少下限</h3><div class="row"><label>白绿件≥</label><input id="PL"></div><div class="row"><label>白绿格≥</label><input id="GL"></div><div class="row"><label>蓝件≥</label><input id="QL"></div><div class="row"><label>蓝格≥</label><input id="LL"></div><div class="row"><label>紫件≥</label><input id="YL"></div><div class="row"><label>紫格≥</label><input id="ZL"></div><div class="row"><label>金件≥</label><input id="XL"></div><div class="row"><label>金格≥</label><input id="JL"></div><div class="row"><label>红件≥</label><input id="SL"></div><div class="row"><label>红格≥</label><input id="HL"></div></div>');
-document.write('<button onclick="calc()">开始计算</button><div class="result" id="out"></div>');
+// ==================== 激活验证 ====================
+const 密钥 = "JPZW119";
+const 云函数URL = "https://1432013476-01vcydnf83.ap-guangzhou.tencentscf.com";
+
+function 获取机器码() {
+    const nav = navigator;
+    const raw = nav.userAgent + nav.language + screen.width + screen.height + screen.colorDepth;
+    return md5(raw).toUpperCase().slice(0, 16).replace(/(.{4})/g, '$1-').slice(0, -1);
 }
+
+async function verifyActivation() {
+    const code = document.getElementById('activationCode').value.trim();
+    if (!code) { alert('请输入激活码'); return; }
+
+    if (code.startsWith('VIP-')) {
+        try {
+            const resp = await fetch(`${云函数URL}?code=${encodeURIComponent(code)}`);
+            const result = await resp.json();
+            console.log(result);
+            if (result.ok) {
+                document.getElementById('activationOverlay').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+            } else {
+                alert('激活失败: ' + JSON.stringify(result));
+            }
+        } catch (e) {
+            alert('网络错误，无法连接验证服务器');
+        }
+    } else {
+        const 机器码 = 获取机器码();
+        const hash = md5(机器码 + 密钥).toUpperCase();
+        const expected = hash.slice(0, 16).replace(/(.{4})/g, '$1-').slice(0, -1);
+        if (code === expected) {
+            document.getElementById('activationOverlay').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'block';
+        } else {
+            alert('激活码不正确');
+        }
+    }
+}
+
+function md5(string) {
+    function rotateLeft(lValue, iShiftBits) {
+        return (lValue << iShiftBits) | (lValue >>> (32 - iShiftBits));
+    }
+    function addUnsigned(lX, lY) {
+        let lX4, lY4, lX8, lY8, lResult;
+        lX8 = (lX & 0x80000000);
+        lY8 = (lY & 0x80000000);
+        lX4 = (lX & 0x40000000);
+        lY4 = (lY & 0x40000000);
+        lResult = (lX & 0x3FFFFFFF) + (lY & 0x3FFFFFFF);
+        if (lX4 & lY4) {
+            return (lResult ^ 0x80000000 ^ lX8 ^ lY8);
+        }
+        if (lX4 | lY4) {
+            if (lResult & 0x40000000) {
+                return (lResult ^ 0xC0000000 ^ lX8 ^ lY8);
+            } else {
+                return (lResult ^ 0x40000000 ^ lX8 ^ lY8);
+            }
+        } else {
+            return (lResult ^ lX8 ^ lY8);
+        }
+    }
+    function F(x, y, z) { return (x & y) | ((~x) & z); }
+    function G(x, y, z) { return (x & z) | (y & (~z)); }
+    function H(x, y, z) { return (x ^ y ^ z); }
+    function I(x, y, z) { return (y ^ (x | (~z))); }
+    function FF(a, b, c, d, x, s, ac) { a = addUnsigned(a, addUnsigned(addUnsigned(F(b, c, d), x), ac)); return addUnsigned(rotateLeft(a, s), b); }
+    function GG(a, b, c, d, x, s, ac) { a = addUnsigned(a, addUnsigned(addUnsigned(G(b, c, d), x), ac)); return addUnsigned(rotateLeft(a, s), b); }
+    function HH(a, b, c, d, x, s, ac) { a = addUnsigned(a, addUnsigned(addUnsigned(H(b, c, d), x), ac)); return addUnsigned(rotateLeft(a, s), b); }
+    function II(a, b, c, d, x, s, ac) { a = addUnsigned(a, addUnsigned(addUnsigned(I(b, c, d), x), ac)); return addUnsigned(rotateLeft(a, s), b); }
+    function convertToWordArray(string) {
+        let wordArray = [];
+        const len = string.length;
+        for (let i = 0; i < len; i += 4) {
+            wordArray[i >> 2] = string.charCodeAt(i) | (string.charCodeAt(i + 1) << 8) | (string.charCodeAt(i + 2) << 16) | (string.charCodeAt(i + 3) << 24);
+        }
+        return wordArray;
+    }
+    function wordToHex(lValue) {
+        let wordToHexValue = '';
+        for (let i = 0; i <= 3; i++) {
+            const byte = (lValue >>> (i * 8)) & 255;
+            wordToHexValue += ('0' + byte.toString(16)).slice(-2);
+        }
+        return wordToHexValue;
+    }
+    const x = convertToWordArray(string);
+    let a = 0x67452301, b = 0xEFCDAB89, c = 0x98BADCFE, d = 0x10325476;
+    const len = string.length * 8;
+    x[len >> 5] |= 0x80 << (len % 32);
+    x[(((len + 64) >>> 9) << 4) + 14] = len;
+    for (let i = 0; i < x.length; i += 16) {
+        const oldA = a, oldB = b, oldC = c, oldD = d;
+        a = FF(a, b, c, d, x[i + 0], 7, 0xD76AA478); d = FF(d, a, b, c, x[i + 1], 12, 0xE8C7B756); c = FF(c, d, a, b, x[i + 2], 17, 0x242070DB); b = FF(b, c, d, a, x[i + 3], 22, 0xC1BDCEEE);
+        a = FF(a, b, c, d, x[i + 4], 7, 0xF57C0FAF); d = FF(d, a, b, c, x[i + 5], 12, 0x4787C62A); c = FF(c, d, a, b, x[i + 6], 17, 0xA8304613); b = FF(b, c, d, a, x[i + 7], 22, 0xFD469501);
+        a = FF(a, b, c, d, x[i + 8], 7, 0x698098D8); d = FF(d, a, b, c, x[i + 9], 12, 0x8B44F7AF); c = FF(c, d, a, b, x[i + 10], 17, 0xFFFF5BB1); b = FF(b, c, d, a, x[i + 11], 22, 0x895CD7BE);
+        a = FF(a, b, c, d, x[i + 12], 7, 0x6B901122); d = FF(d, a, b, c, x[i + 13], 12, 0xFD987193); c = FF(c, d, a, b, x[i + 14], 17, 0xA679438E); b = FF(b, c, d, a, x[i + 15], 22, 0x49B40821);
+        a = GG(a, b, c, d, x[i + 1], 5, 0xF61E2562); d = GG(d, a, b, c, x[i + 6], 9, 0xC040B340); c = GG(c, d, a, b, x[i + 11], 14, 0x265E5A51); b = GG(b, c, d, a, x[i + 0], 20, 0xE9B6C7AA);
+        a = GG(a, b, c, d, x[i + 5], 5, 0xD62F105D); d = GG(d, a, b, c, x[i + 10], 9, 0x2441453); c = GG(c, d, a, b, x[i + 15], 14, 0xD8A1E681); b = GG(b, c, d, a, x[i + 4], 20, 0xE7D3FBC8);
+        a = GG(a, b, c, d, x[i + 9], 5, 0x21E1CDE6); d = GG(d, a, b, c, x[i + 14], 9, 0xC33707D6); c = GG(c, d, a, b, x[i + 3], 14, 0xF4D50D87); b = GG(b, c, d, a, x[i + 8], 20, 0x455A14ED);
+        a = GG(a, b, c, d, x[i + 13], 5, 0xA9E3E905); d = GG(d, a, b, c, x[i + 2], 9, 0xFCEFA3F8); c = GG(c, d, a, b, x[i + 7], 14, 0x676F02D9); b = GG(b, c, d, a, x[i + 12], 20, 0x8D2A4C8A);
+        a = HH(a, b, c, d, x[i + 5], 4, 0xFFFA3942); d = HH(d, a, b, c, x[i + 8], 11, 0x8771F681); c = HH(c, d, a, b, x[i + 11], 16, 0x6D9D6122); b = HH(b, c, d, a, x[i + 14], 23, 0xFDE5380C);
+        a = HH(a, b, c, d, x[i + 1], 4, 0xA4BEEA44); d = HH(d, a, b, c, x[i + 4], 11, 0x4BDECFA9); c = HH(c, d, a, b, x[i + 7], 16, 0xF6BB4B60); b = HH(b, c, d, a, x[i + 12], 23, 0xBEBFBC70);
+        a = HH(a, b, c, d, x[i + 13], 4, 0x289B7EC6); d = HH(d, a, b, c, x[i + 0], 11, 0xEAA127FA); c = HH(c, d, a, b, x[i + 3], 16, 0xD4EF3085); b = HH(b, c, d, a, x[i + 6], 23, 0x4881D05);
+        a = HH(a, b, c, d, x[i + 9], 4, 0xD9D4D039); d = HH(d, a, b, c, x[i + 12], 11, 0xE6DB99E5); c = HH(c, d, a, b, x[i + 15], 16, 0x1FA27CF8); b = HH(b, c, d, a, x[i + 2], 23, 0xC4AC5665);
+        a = II(a, b, c, d, x[i + 0], 6, 0xF4292244); d = II(d, a, b, c, x[i + 7], 10, 0x432AFF97); c = II(c, d, a, b, x[i + 14], 15, 0xAB9423A7); b = II(b, c, d, a, x[i + 5], 21, 0xFC93A039);
+        a = II(a, b, c, d, x[i + 12], 6, 0x655B59C3); d = II(d, a, b, c, x[i + 3], 10, 0x8F0CCC92); c = II(c, d, a, b, x[i + 10], 15, 0xFFEFF47D); b = II(b, c, d, a, x[i + 1], 21, 0x85845DD1);
+        a = II(a, b, c, d, x[i + 8], 6, 0x6FA87E4F); d = II(d, a, b, c, x[i + 15], 10, 0xFE2CE6E0); c = II(c, d, a, b, x[i + 6], 15, 0xA3014314); b = II(b, c, d, a, x[i + 13], 21, 0x4E0811A1);
+        a = II(a, b, c, d, x[i + 4], 6, 0xF7537E82); d = II(d, a, b, c, x[i + 11], 10, 0xBD3AF235); c = II(c, d, a, b, x[i + 2], 15, 0x2AD7D2BB); b = II(b, c, d, a, x[i + 9], 21, 0xEB86D391);
+        a = addUnsigned(a, oldA); b = addUnsigned(b, oldB); c = addUnsigned(c, oldC); d = addUnsigned(d, oldD);
+    }
+    return (wordToHex(a) + wordToHex(b) + wordToHex(c) + wordToHex(d)).toLowerCase();
+}
+
+// ==================== 计算器逻辑（JS版） ====================
 function gv(id){let v=document.getElementById(id).value.trim();return v===''?null:parseFloat(v)}
 function trunc(v,d=2){let s=v.toFixed(10);let i=s.indexOf('.');return parseFloat(s.substring(0,i+d+1))}
 function fmt(v){return Number.isInteger(v)?v:v}
@@ -43,38 +180,39 @@ function rd(t){return'<span class="red">'+t+'</span>'}
 function gn(t){return'<span class="green">'+t+'</span>'}
 function gd(t){return'<span class="gold">'+t+'</span>'}
 function pp(t){return'<span class="purple">'+t+'</span>'}
-function jUpper(x){if(x===1)return 18;if(x===2)return 34;return 45}
-function zUpper(y){if(y===1)return 12;if(y===2)return 22;if(y===3)return 31;if(y===4)return 40;if(y===5)return 49;return 70}
-function lUpper(q){if(q===1)return 20;if(q===2)return 36;if(q===3)return 51;return 70}
-function gUpper(p){if(p===1)return 12;if(p===2)return 21;if(p===3)return 30;if(p===4)return 38;if(p===5)return 42;return 55}
-function hUpper(s){if(s===1)return 16;if(s===2)return 32;if(s===3)return 48;return 50}
+function jUpper(x){if(x===1)return 18;if(x===2)return 36;return 50}
+function zUpper(y){if(y===1)return 12;if(y===2)return 24;if(y===3)return 36;if(y===4)return 46;if(y===5)return 55;return 70}
+function lUpper(q){if(q===1)return 20;if(q===2)return 40;if(q===3)return 56;return 75}
+function gUpper(p){if(p===1)return 12;if(p===2)return 24;if(p===3)return 34;if(p===4)return 40;if(p===5)return 46;return 55}
+function hUpper(s){if(s===1)return 16;if(s===2)return 32;return 40}
 function priceY(price,ub){if(price===null)return null;let lo=Math.floor(price),hi=lo+1,res=[];for(let y=1;y<=ub;y++){for(let r=lo*y;r<=hi*y;r++){if(trunc(r/y,2)===trunc(price,2)){res.push(y);break}}}return[...new Set(res)].sort((a,b)=>a-b)}
 function eg(avg,ub,upperFn){if(avg===null)return[];let lo=Math.floor(avg),hi=lo+1,pool=[];for(let n=1;n<=ub;n++){if(avg*n>upperFn(n))break;let loB=Math.max(Math.ceil(avg),lo*n),hiB=Math.min(upperFn(n),hi*n);for(let g=loB;g<=hiB;g++){if(g<n)continue;if(trunc(g/n,2)===trunc(avg,2)){pool.push([n,g]);break}}}return pool}
+
 function calc(){
 let I=gv('I'),V=gv('V'),A=gv('A'),Qv=gv('Q'),B=gv('B'),W=gv('W'),T=gv('T'),G=gv('G'),L=gv('L'),Z=gv('Z'),J=gv('J'),P=gv('P'),Y=gv('Y'),X=gv('X'),AP=gv('AP'),AQ=gv('AQ'),AR=gv('AR'),AU=gv('AU'),PL=gv('PL'),GL=gv('GL'),QL=gv('QL'),LL=gv('LL'),YL=gv('YL'),ZL=gv('ZL'),XL=gv('XL'),JL=gv('JL'),SL=gv('SL'),HL=gv('HL');
 if(A===0||X===0||J===0){A=0;X=0;J=0}
 if(B===0||Y===0||Z===0){B=0;Y=0;Z=0}
 if(V===0||P===0||G===0){V=0;P=0;G=0}
 if(W===0||Qv===0||L===0){W=0;Qv=0;L=0}
-let gY=priceY(AU,12),zY=priceY(AR,20);
+let gY=priceY(AU,15),zY=priceY(AR,26);
 let jPool=[];
 if(J!==null){jPool=[[X!==null?X:Math.round(J/(A||1)),Math.round(J)]]}
 else if(X!==null&&A!==null){jPool=[[Math.round(X),Math.round(X*A)]]}
-else if(A!==null){jPool=eg(A,12,jUpper);if(gY)jPool=jPool.filter(p=>gY.includes(p[0]))}
+else if(A!==null){jPool=eg(A,15,jUpper);if(gY)jPool=jPool.filter(p=>gY.includes(p[0]))}
 let zPool=[];
 if(Z!==null){zPool=[[Y!==null?Y:Math.round(Z/(B||1)),Math.round(Z)]]}
 else if(Y!==null){if(B!==null)zPool=[[Math.round(Y),Math.round(Y*B)]];else zPool=[[Math.round(Y),null]]}
-else if(B!==null){zPool=eg(B,20,zUpper);if(zY)zPool=zPool.filter(p=>zY.includes(p[0]))}
+else if(B!==null){zPool=eg(B,26,zUpper);if(zY)zPool=zPool.filter(p=>zY.includes(p[0]))}
 else if(zY!==null){zY.forEach(y=>zPool.push([y,null]))}
 let GC=[];
 if(G!==null)GC=[Math.round(G)];
 else if(P!==null&&V!==null)GC=[Math.round(P*V)];
 else if(V!==null)GC=eg(V,40,gUpper).map(p=>p[1]);
-else GC=Array.from({length:51},(_,i)=>i);
+else GC=Array.from({length:56},(_,i)=>i);
 let LC=[];
 if(L!==null)LC=[Math.round(L)];
 else if(Qv!==null&&W!==null)LC=[Math.round(Qv*W)];
-else LC=Array.from({length:56},(_,i)=>i);
+else LC=Array.from({length:76},(_,i)=>i);
 let TC=null;
 if(T!==null)TC=[Math.round(T)];
 let PC=[];
@@ -87,7 +225,7 @@ if(Qv!==null)QC=[Math.round(Qv)];
 else if(W!==null&&L!==null)QC=[Math.round(L/W)];
 else QC=Array.from({length:36},(_,i)=>i);
 let SC=Array.from({length:9},(_,i)=>i);
-let Tup=Math.min(3.5*(I||0),180);
+let Tup=Math.min(4*(I||0),180);
 let out='';
 out+='白绿件数候选: '+lv([...new Set(PC)])+'\n';
 out+='白绿总格候选: '+lv([...new Set(GC)])+'\n';
@@ -142,8 +280,8 @@ let s=Math.round(rem-p-q);
 if(!SC.includes(s))continue;
 if(SL!==null&&s<SL)continue;
 let sum=g+l+j+z;
-if(TC!==null){for(let t of TC){let h=t-sum;if(h>=0&&h<=50&&h>=s&&h<=hUpper(s)){if(h===0&&s!==0)continue;if(h>=1&&s<1)continue;if(HL!==null&&h<HL)continue;if(t>=40&&t<=Tup)all.push([x,y,p,q,s,g,l,j,z,t,h])}}}
-else{for(let h=s;h<=hUpper(s);h++){if(h<0||h>50)continue;if(h===0&&s!==0)continue;if(h>=1&&s<1)continue;if(HL!==null&&h<HL)continue;let t=sum+h;if(t>=40&&t<=Tup)all.push([x,y,p,q,s,g,l,j,z,t,h])}}}}}}}}
+if(TC!==null){for(let t of TC){let h=t-sum;if(h>=0&&h<=40&&h>=s&&h<=hUpper(s)){if(h===0&&s!==0)continue;if(h>=1&&s<1)continue;if(HL!==null&&h<HL)continue;if(t>=40&&t<=Tup)all.push([x,y,p,q,s,g,l,j,z,t,h])}}}
+else{for(let h=s;h<=hUpper(s);h++){if(h<0||h>40)continue;if(h===0&&s!==0)continue;if(h>=1&&s<1)continue;if(HL!==null&&h<HL)continue;let t=sum+h;if(t>=40&&t<=Tup)all.push([x,y,p,q,s,g,l,j,z,t,h])}}}}}}}}
 if(all.length===0){out+='无有效组合。';document.getElementById('out').innerHTML=out;return}
 let effX=[...new Set(all.map(v=>v[0]).filter(v=>v!==null))].sort((a,b)=>a-b);
 let effY=[...new Set(all.map(v=>v[1]).filter(v=>v!==null))].sort((a,b)=>a-b);
@@ -204,41 +342,6 @@ let ttlVals=[...new Set(items.map(v=>Math.round(v[8]*0.3)+Math.round(v[7]*0.7)+M
 out+='G '+lv(gVals)+'  L '+lv(lVals)+'  Z '+pp(lv(zArr))+'  J '+gd(lv(jArr))+' -> H '+rd(h>=1?h:'')+'\n';
 out+='Total '+gn(lv(ttlVals))+' 万\n';
 });
-}
-if(all.length>0){
-out+='\n';
-let P2S={},P2H={};
-all.forEach(v=>{let p=v[2],s=v[4],h=v[10];if(!P2S[p]){P2S[p]=new Set();P2H[p]=new Set()}P2S[p].add(s);P2H[p].add(h)});
-let lockPS=Object.values(P2S).filter(s=>s.size===1).length;
-let lockPH=Object.values(P2H).filter(h=>h.size===1).length;
-let safePS4=Object.values(P2S).filter(s=>Math.min(...s)>=4).length;
-let safePH15=Object.values(P2H).filter(h=>Math.min(...h)>=15).length;
-let totalP=Object.keys(P2S).length;
-out+='──拿P──\n可锁定唯一S: '+Math.round(lockPS/totalP*100)+'%\n可锁定唯一H: '+Math.round(lockPH/totalP*100)+'%\n可锁定S≥4: '+Math.round(safePS4/totalP*100)+'%\n可锁定H≥15: '+Math.round(safePH15/totalP*100)+'%\n\n';
-let Y2S={},Y2H={};
-all.forEach(v=>{let y=v[1],s=v[4],h=v[10];if(!Y2S[y]){Y2S[y]=new Set();Y2H[y]=new Set()}Y2S[y].add(s);Y2H[y].add(h)});
-let lockYS=Object.values(Y2S).filter(s=>s.size===1).length;
-let lockYH=Object.values(Y2H).filter(h=>h.size===1).length;
-let safeYS4=Object.values(Y2S).filter(s=>Math.min(...s)>=4).length;
-let safeYH15=Object.values(Y2H).filter(h=>Math.min(...h)>=15).length;
-let totalY=Object.keys(Y2S).length;
-out+='──拿Y──\n可锁定唯一S: '+Math.round(lockYS/totalY*100)+'%\n可锁定唯一H: '+Math.round(lockYH/totalY*100)+'%\n可锁定S≥4: '+Math.round(safeYS4/totalY*100)+'%\n可锁定H≥15: '+Math.round(safeYH15/totalY*100)+'%\n\n';
-let T2S={},T2H={};
-all.forEach(v=>{let t=v[9],s=v[4],h=v[10];if(!T2S[t]){T2S[t]=new Set();T2H[t]=new Set()}T2S[t].add(s);T2H[t].add(h)});
-let lockTS=Object.values(T2S).filter(s=>s.size===1).length;
-let lockTH=Object.values(T2H).filter(h=>h.size===1).length;
-let safeTS4=Object.values(T2S).filter(s=>Math.min(...s)>=4).length;
-let safeTH15=Object.values(T2H).filter(h=>Math.min(...h)>=15).length;
-let totalT=Object.keys(T2S).length;
-out+='──拿T──\n可锁定唯一S: '+Math.round(lockTS/totalT*100)+'%\n可锁定唯一H: '+Math.round(lockTH/totalT*100)+'%\n可锁定S≥4: '+Math.round(safeTS4/totalT*100)+'%\n可锁定H≥15: '+Math.round(safeTH15/totalT*100)+'%\n\n';
-let X2S={},X2H={};
-all.forEach(v=>{let x=v[0],s=v[4],h=v[10];if(!X2S[x]){X2S[x]=new Set();X2H[x]=new Set()}X2S[x].add(s);X2H[x].add(h)});
-let lockXS=Object.values(X2S).filter(s=>s.size===1).length;
-let lockXH=Object.values(X2H).filter(h=>h.size===1).length;
-let safeXS4=Object.values(X2S).filter(s=>Math.min(...s)>=4).length;
-let safeXH15=Object.values(X2H).filter(h=>Math.min(...h)>=15).length;
-let totalX=Object.keys(X2S).length;
-out+='──拿X──\n可锁定唯一S: '+Math.round(lockXS/totalX*100)+'%\n可锁定唯一H: '+Math.round(lockXH/totalX*100)+'%\n可锁定S≥4: '+Math.round(safeXS4/totalX*100)+'%\n可锁定H≥15: '+Math.round(safeXH15/totalX*100)+'%\n';
 }
 document.getElementById('out').innerHTML=out;
 }
