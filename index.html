@@ -71,15 +71,14 @@ async function verifyActivation() {
         try {
             const resp = await fetch(`${云函数URL}?code=${encodeURIComponent(code)}`);
             const result = await resp.json();
-            console.log(result);
             if (result.ok) {
                 document.getElementById('activationOverlay').style.display = 'none';
                 document.getElementById('mainApp').style.display = 'block';
             } else {
-                alert('激活失败: ' + result.msg);
+                alert('激活失败: ' + (result.msg || '未知错误'));
             }
         } catch (e) {
-            alert('网络错误，无法连接验证服务器');
+            alert('网络错误，无法连接验证服务器: ' + e.message);
         }
     } else {
         const 机器码 = 获取机器码();
