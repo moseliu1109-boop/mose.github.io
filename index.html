@@ -44,7 +44,7 @@ button{width:100%;padding:10px;background:#e0b0ff;color:#1a1a2e;border:none;bord
 <div class="section"><h3>第二回合</h3><div class="row"><label>金均格A</label><input id="A"></div><div class="row"><label>蓝件数Q</label><input id="Q"></div></div>
 <div class="section"><h3>第三回合</h3><div class="row"><label>紫均格B</label><input id="B"></div></div>
 <div class="section"><h3>第四回合</h3><div class="row"><label>蓝均格W</label><input id="W"></div></div>
-<div class="section"><h3>总格</h3><div class="row"><label>全总格T</label><input id="T"></div><div class="row"><label>白绿总格G</label><input id="G"></div><div class="row"><label>蓝总格L</label><input id="L"></div><div class="row"><label>紫总格Z</label><input id="Z"></div><div class="row"><label>金总格J</label><input id="J"></div></div>
+<div class="section"><h3>总格</h3><div class="row"><label>全均格U</label><input id="U"></div><div class="row"><label>全总格T</label><input id="T"></div><div class="row"><label>白绿总格G</label><input id="G"></div><div class="row"><label>蓝总格L</label><input id="L"></div><div class="row"><label>紫总格Z</label><input id="Z"></div><div class="row"><label>金总格J</label><input id="J"></div></div>
 <div class="section"><h3>件数</h3><div class="row"><label>白绿件数P</label><input id="P"></div><div class="row"><label>紫件数Y</label><input id="Y"></div><div class="row"><label>金件数X</label><input id="X"></div></div>
 <div class="section"><h3>均价</h3><div class="row"><label>白绿均价</label><input id="AP"></div><div class="row"><label>蓝均价</label><input id="AQ"></div><div class="row"><label>紫均价</label><input id="AR"></div><div class="row"><label>金均价</label><input id="AU"></div></div>
 <div class="section"><h3>最少下限</h3><div class="row"><label>白绿件≥</label><input id="PL"></div><div class="row"><label>白绿格≥</label><input id="GL"></div><div class="row"><label>蓝件≥</label><input id="QL"></div><div class="row"><label>蓝格≥</label><input id="LL"></div><div class="row"><label>紫件≥</label><input id="YL"></div><div class="row"><label>紫格≥</label><input id="ZL"></div><div class="row"><label>金件≥</label><input id="XL"></div><div class="row"><label>金格≥</label><input id="JL"></div><div class="row"><label>红件≥</label><input id="SL"></div><div class="row"><label>红格≥</label><input id="HL"></div></div>
@@ -189,7 +189,7 @@ function priceY(price,ub){if(price===null)return null;let lo=Math.floor(price),h
 function eg(avg,ub,upperFn){if(avg===null)return[];let lo=Math.floor(avg),hi=lo+1,pool=[];for(let n=1;n<=ub;n++){if(avg*n>upperFn(n))break;let loB=Math.max(Math.ceil(avg),lo*n),hiB=Math.min(upperFn(n),hi*n);for(let g=loB;g<=hiB;g++){if(g<n)continue;if(trunc(g/n,2)===trunc(avg,2)){pool.push([n,g]);break}}}return pool}
 
 function calc(){
-let I=gv('I'),V=gv('V'),A=gv('A'),Qv=gv('Q'),B=gv('B'),W=gv('W'),T=gv('T'),G=gv('G'),L=gv('L'),Z=gv('Z'),J=gv('J'),P=gv('P'),Y=gv('Y'),X=gv('X'),AP=gv('AP'),AQ=gv('AQ'),AR=gv('AR'),AU=gv('AU'),PL=gv('PL'),GL=gv('GL'),QL=gv('QL'),LL=gv('LL'),YL=gv('YL'),ZL=gv('ZL'),XL=gv('XL'),JL=gv('JL'),SL=gv('SL'),HL=gv('HL');
+let I=gv('I'),V=gv('V'),A=gv('A'),Qv=gv('Q'),B=gv('B'),W=gv('W'),U=gv('U'),T=gv('T'),G=gv('G'),L=gv('L'),Z=gv('Z'),J=gv('J'),P=gv('P'),Y=gv('Y'),X=gv('X'),AP=gv('AP'),AQ=gv('AQ'),AR=gv('AR'),AU=gv('AU'),PL=gv('PL'),GL=gv('GL'),QL=gv('QL'),LL=gv('LL'),YL=gv('YL'),ZL=gv('ZL'),XL=gv('XL'),JL=gv('JL'),SL=gv('SL'),HL=gv('HL');
 if(A===0||X===0||J===0){A=0;X=0;J=0}
 if(B===0||Y===0||Z===0){B=0;Y=0;Z=0}
 if(V===0||P===0||G===0){V=0;P=0;G=0}
@@ -215,6 +215,7 @@ else if(Qv!==null&&W!==null)LC=[Math.round(Qv*W)];
 else LC=Array.from({length:76},(_,i)=>i);
 let TC=null;
 if(T!==null)TC=[Math.round(T)];
+else if(U!==null&&I!==null)TC=[Math.round(I*U)];
 let PC=[];
 if(P!==null)PC=[Math.round(P)];
 else if(V!==null&&G!==null)PC=[Math.round(G/V)];
@@ -304,6 +305,7 @@ Object.keys(grp).sort((a,b)=>a-b).forEach(s=>{
 if(out.includes('---'))out+='----------------------------------------\n';
 let items=grp[s];
 let pairs=[...new Set(items.map(v=>v[1]+','+v[0]+','+v[8]+','+v[7]+','+v[10]))].map(s=>s.split(',').map(Number)).sort((a,b)=>a[0]-b[0]);
+let yArr=pairs.map(p=>p[0]),xArr=pairs.map(p=>
 let yArr=pairs.map(p=>p[0]),xArr=pairs.map(p=>p[1]),zArr=pairs.map(p=>p[2]),jArr=pairs.map(p=>p[3]),hArr=pairs.map(p=>p[4]);
 let pVals=[...new Set(items.map(v=>v[2]))].sort((a,b)=>a-b);
 let qVals=[...new Set(items.map(v=>v[3]))].sort((a,b)=>a-b);
